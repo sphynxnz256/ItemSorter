@@ -12,24 +12,26 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     ros-jazzy-moveit \
     ros-jazzy-ros-gz \
+    ros-jazzy-ros-gz-sim \
+    ros-jazzy-ros-gz-bridge \
     ros-jazzy-ros2-control \
     ros-jazzy-ros2-controllers \
+    ros-jazzy-gz-ros2-control \
     python3-colcon-common-extensions \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# NanoClaw Runtime: Node.js (v24 stable) and Node Version Manager (NVM)
-ENV NVM_DIR /usr/local/nvm
+# Node.js Environment: NVM-managed v24 runtime with dynamic version linking
+ENV NVM_DIR="/usr/local/nvm"
 RUN mkdir -p $NVM_DIR \
     && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install 24 \
-    && nvm use 24 \
     && nvm alias default 24 \
-    && npm install -g npm@latest \
-    && npm install --no-audit --no-fund --yes -g yarn
-# Set path to the specific version installed by NVM
-ENV PATH $NVM_DIR/versions/node/v24.14.1/bin:$PATH
+    && nvm use default \
+    && ln -s /usr/local/nvm/versions/node/$(nvm version default) /usr/local/nvm/current
+# Use the 'current' shortcut to find Node.js binaries.
+ENV PATH="$NVM_DIR/current/bin:$PATH"
 
 # Non-root user configuration
 ARG USERNAME=ros_user
@@ -50,6 +52,6 @@ USER $USERNAME
 WORKDIR /workspaces/ItemSorter
 
 # Persistent environment sourcing for interactive shells
-RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc \
-    && echo 'export NVM_DIR="/usr/local/nvm"' >> ~/.bashrc \    
-    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+RUN echo 'source /opt/ros/jazzy/setup.bash' >> /home/ros_user/.bashrc \
+    && echo 'export NVM_DIR="/usr/local/nvm"' >> /home/ros_user/.bashrc \
+    && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/ros_user/.bashrc

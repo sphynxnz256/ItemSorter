@@ -34,10 +34,8 @@
         "NVM_DIR": "/usr/local/nvm"
     },
     "runArgs": [
-        "--network=host",
         "--privileged"
     ],
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/ItemSorter,type=bind",
-    "workspaceFolder": "/workspaces/ItemSorter",
-    
+    "workspaceFolder": "/workspaces/ItemSorter"    
 }
