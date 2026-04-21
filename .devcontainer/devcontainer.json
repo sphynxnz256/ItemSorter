@@ -34,8 +34,10 @@
         "NVM_DIR": "/usr/local/nvm"
     },
     "runArgs": [
-        "--privileged"
+        "--privileged",
+        "--init"
     ],
+    "overrideCommand": true,
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/ItemSorter,type=bind",
     "workspaceFolder": "/workspaces/ItemSorter"    
 }
